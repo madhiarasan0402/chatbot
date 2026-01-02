@@ -42,16 +42,10 @@ app.get('/', (req, res) => {
     });
 });
 
-// Serve static files from React app in production (if exists)
-if (process.env.NODE_ENV === 'production') {
-    const clientBuildPath = path.join(__dirname, '../client/dist');
-    app.use(express.static(clientBuildPath));
-
-    // SPA fallback - serve index.html for any route not matched above
-    app.get('*', (req, res) => {
-        res.sendFile(path.join(clientBuildPath, 'index.html'));
-    });
-}
+// 404 Handler for unknown routes
+app.use((req, res) => {
+    res.status(404).json({ error: "Route not found" });
+});
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
