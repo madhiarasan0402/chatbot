@@ -1,15 +1,16 @@
 {
     "version": 2,
+    "buildCommand": "cd client && npm install && npm run build",
+    "outputDirectory": "client/dist",
+    "installCommand": "npm install --prefix server",
     "builds": [
         {
             "src": "server/index.js",
-            "use": "@vercel/node"
-        },
-        {
-            "src": "client/package.json",
-            "use": "@vercel/static-build",
+            "use": "@vercel/node",
             "config": {
-                "distDir": "dist"
+                "includeFiles": [
+                    "server/**"
+                ]
             }
         }
     ],
@@ -24,11 +25,13 @@
         },
         {
             "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|json|woff|woff2|ttf|eot))",
-            "dest": "client/dist/$1"
+            "headers": {
+                "cache-control": "public, max-age=31536000, immutable"
+            }
         },
         {
             "src": "/(.*)",
-            "dest": "client/dist/index.html"
+            "dest": "/index.html"
         }
     ],
     "env": {
