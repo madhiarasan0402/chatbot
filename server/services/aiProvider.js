@@ -60,8 +60,13 @@ async function processChat(content, files, history) {
             }
 
             const result = await chat.sendMessage(promptParts);
-            const response = await result.response;
-            const text = response.text();
+
+            // ✅ SAFE extraction
+            const text = result?.response?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+            if (!text) {
+                throw new Error("Empty response from Gemini");
+            }
 
             return {
                 content: text,
@@ -85,8 +90,9 @@ async function processChat(content, files, history) {
                 try {
                     // One immediate retry for the same model
                     const result = await chat.sendMessage(promptParts);
-                    const response = await result.response;
-                    return { content: response.text(), role: 'assistant', type: 'text' };
+                    const text = result?.response?.candidates?.[0]?.content?.parts?.[0]?.text;
+                    if (!text) throw new Error("Empty response from Gemini (retry)");
+                    return { content: text, role: 'assistant', type: 'text' };
                 } catch (retryError) {
                     console.error(`Retry failed for ${modelName}:`, retryError.message);
                     continue; // Try next model in the list

@@ -17,6 +17,11 @@ const upload = multer({ storage });
 router.post('/chat', upload.array('files'), async (req, res) => {
     try {
         const { content, history } = req.body;
+
+        if (!content) {
+            return res.status(400).json({ error: "Message content is required" });
+        }
+
         const files = req.files;
 
         const response = await processChat(content, files, JSON.parse(history || '[]'));
