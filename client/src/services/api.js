@@ -1,4 +1,5 @@
-const API_URL = 'http://localhost:5000/api';
+const BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/$/, '');
+const API_URL = `${BASE_URL}/api`;
 
 export const sendMessage = async (content, files = [], history = [], forceType) => {
     const formData = new FormData();
