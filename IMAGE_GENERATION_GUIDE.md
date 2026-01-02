@@ -22,6 +22,7 @@ Now tries 3 different models in order:
 
 **After:** "Create a logo with 'Selfie AI'"
 → Enhanced to: "Professional typography design featuring the exact text "Selfie AI". Perfect spelling required. Minimalist logo style, vector art, clean design. High quality, 4k."
+Testing...
 
 #### For Regular Images:
 **Before:** "sunset over mountains"
