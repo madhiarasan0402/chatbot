@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const path = require('path');
 require('dotenv').config();
 
 const chatRoutes = require('./routes/chat');
@@ -18,14 +19,41 @@ app.use((req, res, next) => {
     next();
 });
 
-// Routes
+// API Routes (must come BEFORE static file serving)
 app.use('/api', chatRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
-    res.json({ status: 'ok' });
+    res.json({ status: 'ok', message: 'Selfie AI Backend is running' });
 });
+
+// Root route for API-only mode
+app.get('/', (req, res) => {
+    res.json({
+        name: 'Selfie AI API',
+        status: 'running',
+        version: '1.0.0',
+        endpoints: {
+            chat: '/api/chat',
+            generateImage: '/api/generate-image',
+            proxyImage: '/api/proxy-image',
+            health: '/health'
+        }
+    });
+});
+
+// Serve static files from React app in production (if exists)
+if (process.env.NODE_ENV === 'production') {
+    const clientBuildPath = path.join(__dirname, '../client/dist');
+    app.use(express.static(clientBuildPath));
+
+    // SPA fallback - serve index.html for any route not matched above
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(clientBuildPath, 'index.html'));
+    });
+}
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
+    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
