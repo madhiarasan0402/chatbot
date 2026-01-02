@@ -16,7 +16,10 @@ const upload = multer({ storage });
 
 router.post('/chat', upload.array('files'), async (req, res) => {
     try {
-        const { content, history } = req.body;
+        // Support both 'message' (requested by user) and 'content' (existing)
+        // ✅ SAFE Access
+        const content = req.body?.content || req.body?.message;
+        const history = req.body?.history;
 
         if (!content) {
             return res.status(400).json({ error: "Message content is required" });
@@ -35,7 +38,12 @@ router.post('/chat', upload.array('files'), async (req, res) => {
 
 router.post('/generate-image', upload.array('files'), async (req, res) => {
     try {
-        const { content } = req.body;
+        const content = req.body?.content;
+
+        if (!content) {
+            return res.status(400).json({ error: "Image prompt content is required" });
+        }
+
         console.log(`[API] Image Generation Prompt: "${content}"`);
         const response = await generateImage(content);
         console.log(`[API] Image Gen Response: ${response.imageUrl || 'ERROR'}`);
