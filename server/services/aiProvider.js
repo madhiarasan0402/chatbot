@@ -239,7 +239,7 @@ async function generateImage(prompt) {
 
             // Route through proxy for consistency
             const encodedTargetUrl = encodeURIComponent(targetUrl);
-            const proxiedUrl = `http://localhost:5000/api/proxy-image?url=${encodedTargetUrl}`;
+            const proxiedUrl = `/api/proxy-image?url=${encodedTargetUrl}`;
 
             // Small delay to avoid rate limiting
             await new Promise(resolve => setTimeout(resolve, 100));
