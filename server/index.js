@@ -27,24 +27,12 @@ app.get('/health', (req, res) => {
     res.json({ status: 'ok', message: 'Selfie AI Backend is running' });
 });
 
-// Root route for API-only mode
-app.get('/', (req, res) => {
-    res.json({
-        name: 'Selfie AI API',
-        status: 'running',
-        version: '1.0.0',
-        endpoints: {
-            chat: '/api/chat',
-            generateImage: '/api/generate-image',
-            proxyImage: '/api/proxy-image',
-            health: '/health'
-        }
-    });
-});
+// Serve static files from the client build directory
+app.use(express.static(path.join(__dirname, '../client/dist')));
 
-// 404 Handler for unknown routes
-app.use((req, res) => {
-    res.status(404).json({ error: "Route not found" });
+// Handle React routing (SPA)
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/dist/index.html'));
 });
 
 app.listen(PORT, () => {
