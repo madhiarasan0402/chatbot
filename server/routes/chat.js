@@ -45,7 +45,13 @@ router.post('/generate-image', upload.array('files'), async (req, res) => {
         }
 
         console.log(`[API] Image Generation Prompt: "${content}"`);
-        const response = await generateImage(content);
+
+        // Construct absolute Base URL for image proxying
+        const protocol = req.protocol;
+        const host = req.get('host');
+        const baseUrl = `${protocol}://${host}`;
+
+        const response = await generateImage(content, baseUrl);
         console.log(`[API] Image Gen Response: ${response.imageUrl || 'ERROR'}`);
         res.json(response);
     } catch (error) {

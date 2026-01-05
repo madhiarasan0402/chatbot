@@ -158,7 +158,7 @@ async function processChatFallback(content, history) {
     }
 }
 
-async function generateImage(prompt) {
+async function generateImage(prompt, baseUrl = '') {
     console.log(`[IMAGE GEN] Original Prompt: "${prompt}"`);
 
     // If OpenAI key exists, try DALL-E 3 first (most accurate)
@@ -239,7 +239,7 @@ async function generateImage(prompt) {
 
             // Route through proxy for consistency
             const encodedTargetUrl = encodeURIComponent(targetUrl);
-            const proxiedUrl = `/api/proxy-image?url=${encodedTargetUrl}`;
+            const proxiedUrl = `${baseUrl}/api/proxy-image?url=${encodedTargetUrl}`;
 
             // Small delay to avoid rate limiting
             await new Promise(resolve => setTimeout(resolve, 100));
