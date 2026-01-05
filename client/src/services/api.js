@@ -70,9 +70,26 @@ export const sendMessage = async (content, files = [], history = [], forceType) 
     });
 
     if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to send message');
+        let errorMsg = `Server error: ${response.status} ${response.statusText}`;
+        try {
+            const error = await response.json();
+            errorMsg = error.message || errorMsg;
+        } catch (e) {
+            // If JSON parse fails, try reading text
+            const text = await response.text();
+            console.error('Non-JSON error response:', text);
+            if (response.status === 404) {
+                errorMsg = 'Backend endpoint not found. Check your API URL configuration.';
+            } else if (text.includes('<!DOCTYPE html>')) {
+                errorMsg = 'Received HTML instead of JSON. Check your API URL and server status.';
+            }
+        }
+        throw new Error(errorMsg);
     }
 
-    return await response.json();
+    try {
+        return await response.json();
+    } catch (e) {
+        throw new Error('Invalid JSON response from server');
+    }
 };
